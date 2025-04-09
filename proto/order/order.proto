@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package store.public;
+
+import "proto/common/common.proto";
+
+option go_package = "go_store/generated/proto/order;order";
+
+service OrderService {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse);
+  rpc UpdateOrderStatus(UpdateOrderStatusRequest) returns (UpdateOrderStatusResponse);
+}
+
+message CreateOrderRequest {
+  string customer_name = 1;
+  string customer_email = 2;
+  repeated store.common.OrderItem items = 3;
+}
+
+message CreateOrderResponse {
+  string id = 1;
+}
+
+message GetOrderRequest {
+  string id = 1;
+}
+
+message GetOrderResponse {
+  store.common.Order order = 1;
+}
+
+message ListOrdersRequest {
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message ListOrdersResponse {
+  repeated store.common.Order orders = 1;
+}
+
+message UpdateOrderStatusRequest {
+  string id = 1;
+  store.common.OrderStatus status = 2;
+}
+
+message UpdateOrderStatusResponse {
+}
+

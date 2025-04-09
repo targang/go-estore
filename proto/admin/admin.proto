@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package store.admin;
+
+option go_package = "go_store/generated/proto/admin;admin";
+
+service AdminService {
+  rpc Login(AdminLoginRequest) returns (AdminLoginResponse);
+}
+
+message AdminLoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message AdminLoginResponse {
+  string token = 1;
+}

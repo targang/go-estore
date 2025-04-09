@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package store.public;
+
+import "proto/common/common.proto";
+
+option go_package = "go_store/generated/proto/product;product";
+
+service ProductService {
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message GetProductResponse {
+  store.common.Product product = 1;
+}
+
+message ListProductsRequest {
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message ListProductsResponse {
+  repeated store.common.Product products = 1;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  string description = 2;
+  int64 price = 3;
+}
+
+message CreateProductResponse {
+  string id = 1;
+}
+
+message DeleteProductRequest {
+  string id = 1;
+}
+
+message DeleteProductResponse {
+}

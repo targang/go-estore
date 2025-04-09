@@ -1,0 +1,33 @@
+lint:
+  use:
+    - DEFAULT
+  enum_zero_value_suffix: _UNSPECIFIED
+  service_suffix: Service
+  ignore: [ ]
+  except: [ ]
+  allow_comment_ignores: false
+  ignore_only: { }
+deps:
+  - github.com/googleapis/googleapis
+  - github.com/bufbuild/protoc-gen-validate
+generate:
+  plugins:
+
+    - name: go
+      out: ./generated
+      opts:
+        paths: source_relative
+    - name: go-grpc
+      out: ./generated
+      opts:
+        paths: source_relative
+        require_unimplemented_servers: false
+    - name: validate
+      out: ./generated
+      path: ./bin/protoc-gen-validate
+      opts:
+        paths: source_relative
+        lang: go
+breaking:
+  use:
+    - FILE

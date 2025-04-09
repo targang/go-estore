@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package store.common;
+
+option go_package = "go_store/generated/proto/common;common";
+
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_PENDING = 1;
+  ORDER_STATUS_PROCESSING = 2;
+  ORDER_STATUS_COMPLETED = 3;
+  ORDER_STATUS_CANCELED = 4;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  int64 price = 4;
+}
+
+message OrderItem {
+  string product_id = 1;
+  int32 quantity = 2;
+}
+
+message Order {
+  string id = 1;
+  string customer_name = 2;
+  string customer_email = 3;
+  repeated OrderItem items = 4;
+  OrderStatus status = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
