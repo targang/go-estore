@@ -3,7 +3,7 @@ module go_store
 go 1.24
 
 require (
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3
+	github.com/envoyproxy/protoc-gen-validate v1.2.1
 	github.com/jackc/pgx/v5 v5.7.4
 	github.com/pressly/goose/v3 v3.24.2
 	go.uber.org/zap v1.27.0
@@ -11,7 +11,7 @@ require (
 	google.golang.org/protobuf v1.36.6
 )
 
-require google.golang.org/genproto/googleapis/api v0.0.0-20250303144028-a0af3efb3deb // indirect
+require github.com/google/go-cmp v0.7.0 // indirect
 
 require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect

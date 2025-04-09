@@ -12,7 +12,6 @@ deps:
   - github.com/bufbuild/protoc-gen-validate
 generate:
   plugins:
-
     - name: go
       out: ./generated
       opts:
@@ -24,7 +23,6 @@ generate:
         require_unimplemented_servers: false
     - name: validate
       out: ./generated
-      path: ./bin/protoc-gen-validate
       opts:
         paths: source_relative
         lang: go

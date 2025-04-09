@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
 
 package store.common;
 
@@ -22,8 +23,8 @@ message Product {
 }
 
 message OrderItem {
-  string product_id = 1;
-  int32 quantity = 2;
+  string product_id = 1 [(validate.rules).string.uuid = true];
+  int32 quantity = 2 [(validate.rules).int32.gt = 0];
 }
 
 message Order {

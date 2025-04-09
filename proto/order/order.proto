@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package store.public;
 
+import "validate/validate.proto";
 import "proto/common/common.proto";
 
 option go_package = "go_store/generated/proto/order;order";
@@ -14,8 +15,8 @@ service OrderService {
 }
 
 message CreateOrderRequest {
-  string customer_name = 1;
-  string customer_email = 2;
+  string customer_name = 1 [(validate.rules).string.max_len = 255];
+  string customer_email = 2 [(validate.rules).string.email = true];
   repeated store.common.OrderItem items = 3;
 }
 
@@ -24,7 +25,7 @@ message CreateOrderResponse {
 }
 
 message GetOrderRequest {
-  string id = 1;
+  string id = 1 [(validate.rules).string.uuid = true];
 }
 
 message GetOrderResponse {
@@ -32,8 +33,8 @@ message GetOrderResponse {
 }
 
 message ListOrdersRequest {
-  int32 limit = 2;
-  int32 offset = 3;
+  int32 limit = 1 [(validate.rules).int32 = {gte: 0, lte: 100}];
+  int32 offset = 2 [(validate.rules).int32 = {gte:0}];
 }
 
 message ListOrdersResponse {
@@ -41,7 +42,7 @@ message ListOrdersResponse {
 }
 
 message UpdateOrderStatusRequest {
-  string id = 1;
+  string id = 1 [(validate.rules).string.uuid = true];
   store.common.OrderStatus status = 2;
 }
 
