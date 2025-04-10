@@ -30,7 +30,6 @@ type (
 		Username     string `env:"ADMIN_USERNAME"`
 		PasswordHash string `env:"ADMIN_PASSWORD_HASH"`
 		JWTSecret    string `env:"ADMIN_JWT_SECRET"`
-		TokenExpire  int64  `env:"ADMIN_TOKEN_EXPIRE"`
 	}
 )
 
