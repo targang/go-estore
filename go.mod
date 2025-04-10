@@ -4,7 +4,6 @@ go 1.24
 
 require (
 	github.com/envoyproxy/protoc-gen-validate v1.2.1
-	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/jackc/pgx/v5 v5.7.4
 	github.com/pressly/goose/v3 v3.24.2
