@@ -25,10 +25,20 @@ type Implementation struct {
 	logger         *zap.Logger
 	productUseCase usecase.ProductUseCase
 	orderUseCase   usecase.OrderUseCase
+	adminUseCase   usecase.AdminUseCase
 }
 
 func (i *Implementation) Login(ctx context.Context, request *admin.AdminLoginRequest) (*admin.AdminLoginResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "not implemented")
+	if err := request.ValidateAll(); err != nil {
+		i.logger.Warn("validation error", zap.Error(err))
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	token, err := i.adminUseCase.Login(ctx, request.Username, request.Password)
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
+	}
+
+	return &admin.AdminLoginResponse{Token: token}, nil
 }
 
 func (i *Implementation) GetProduct(ctx context.Context, request *product.GetProductRequest) (*product.GetProductResponse, error) {
@@ -69,7 +79,7 @@ func (i *Implementation) ListProducts(ctx context.Context, request *product.List
 	return &product.ListProductsResponse{Products: products}, nil
 }
 
-func (i *Implementation) CreateProduct(ctx context.Context, request *product.CreateProductRequest) (*product.CreateProductResponse, error) {
+func (i *Implementation) CreateProduct(ctx context.Context, request *admin.CreateProductRequest) (*admin.CreateProductResponse, error) {
 	if err := request.ValidateAll(); err != nil {
 		i.logger.Warn("validation error", zap.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -78,10 +88,10 @@ func (i *Implementation) CreateProduct(ctx context.Context, request *product.Cre
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &product.CreateProductResponse{Id: result}, nil
+	return &admin.CreateProductResponse{Id: result}, nil
 }
 
-func (i *Implementation) DeleteProduct(ctx context.Context, request *product.DeleteProductRequest) (*product.DeleteProductResponse, error) {
+func (i *Implementation) DeleteProduct(ctx context.Context, request *admin.DeleteProductRequest) (*admin.DeleteProductResponse, error) {
 	if err := request.ValidateAll(); err != nil {
 		i.logger.Warn("validation error", zap.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -89,7 +99,7 @@ func (i *Implementation) DeleteProduct(ctx context.Context, request *product.Del
 	if err := i.productUseCase.Delete(ctx, request.Id); err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &product.DeleteProductResponse{}, nil
+	return &admin.DeleteProductResponse{}, nil
 }
 
 func (i *Implementation) CreateOrder(ctx context.Context, request *order.CreateOrderRequest) (*order.CreateOrderResponse, error) {
@@ -123,7 +133,7 @@ func (i *Implementation) GetOrder(ctx context.Context, request *order.GetOrderRe
 	return &order.GetOrderResponse{Order: result.ConvertToMessage()}, nil
 }
 
-func (i *Implementation) ListOrders(ctx context.Context, request *order.ListOrdersRequest) (*order.ListOrdersResponse, error) {
+func (i *Implementation) ListOrders(ctx context.Context, request *admin.ListOrdersRequest) (*admin.ListOrdersResponse, error) {
 	if err := request.ValidateAll(); err != nil {
 		i.logger.Warn("validation error", zap.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -136,10 +146,10 @@ func (i *Implementation) ListOrders(ctx context.Context, request *order.ListOrde
 	for _, modelOrder := range modelOrders {
 		responseOrders = append(responseOrders, modelOrder.ConvertToMessage())
 	}
-	return &order.ListOrdersResponse{Orders: responseOrders}, nil
+	return &admin.ListOrdersResponse{Orders: responseOrders}, nil
 }
 
-func (i *Implementation) UpdateOrderStatus(ctx context.Context, request *order.UpdateOrderStatusRequest) (*order.UpdateOrderStatusResponse, error) {
+func (i *Implementation) UpdateOrderStatus(ctx context.Context, request *admin.UpdateOrderStatusRequest) (*admin.UpdateOrderStatusResponse, error) {
 	if err := request.ValidateAll(); err != nil {
 		i.logger.Warn("validation error", zap.Error(err))
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -148,17 +158,19 @@ func (i *Implementation) UpdateOrderStatus(ctx context.Context, request *order.U
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &order.UpdateOrderStatusResponse{}, nil
+	return &admin.UpdateOrderStatusResponse{}, nil
 }
 
 func New(
 	logger *zap.Logger,
 	productUseCase usecase.ProductUseCase,
 	orderUseCase usecase.OrderUseCase,
+	adminUseCase usecase.AdminUseCase,
 ) *Implementation {
 	return &Implementation{
 		logger:         logger,
 		productUseCase: productUseCase,
 		orderUseCase:   orderUseCase,
+		adminUseCase:   adminUseCase,
 	}
 }

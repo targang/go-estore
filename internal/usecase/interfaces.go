@@ -5,6 +5,10 @@ import (
 	"go_store/internal/model"
 )
 
+type AdminUseCase interface {
+	Login(ctx context.Context, username string, password string) (string, error)
+}
+
 type ProductUseCase interface {
 	Create(ctx context.Context, name string, description string, price int64) (string, error)
 	Delete(ctx context.Context, id string) error

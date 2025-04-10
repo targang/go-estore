@@ -10,6 +10,7 @@ import (
 	"go_store/generated/proto/order"
 	"go_store/generated/proto/product"
 	controller "go_store/internal/controller/grpc"
+	"go_store/internal/controller/interceptor"
 	"go_store/internal/repository"
 	"go_store/internal/usecase"
 	"google.golang.org/grpc"
@@ -43,8 +44,9 @@ func Run(logger *zap.Logger, cfg *config.Config) {
 
 	productUseCase := usecase.NewProductUseCase(logger, productRepository)
 	orderUseCase := usecase.NewOrderUseCase(logger, orderRepository)
+	adminUseCase := usecase.NewAdminUseCase(logger, &cfg.Admin)
 
-	ctrl := controller.New(logger, productUseCase, orderUseCase)
+	ctrl := controller.New(logger, productUseCase, orderUseCase, adminUseCase)
 	go runGrpc(cfg, logger, ctrl)
 
 	<-ctx.Done()
@@ -60,7 +62,7 @@ func runGrpc(cfg *config.Config, logger *zap.Logger, server controller.Server) {
 		os.Exit(-1)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(grpc.UnaryInterceptor(interceptor.AuthInterceptor(cfg.Admin.JWTSecret)))
 	reflection.Register(s)
 
 	product.RegisterProductServiceServer(s, server)
